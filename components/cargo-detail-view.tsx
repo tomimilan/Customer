@@ -15,6 +15,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog"
 import { Switch } from "@/components/ui/switch"
 import Image from "next/image"
+import { Textarea } from "@/components/ui/textarea"
 
 interface CargoDetailViewProps {
   cargoId: string
@@ -104,6 +105,8 @@ export function CargoDetailView({ cargoId }: CargoDetailViewProps) {
   const [instructivoForm, setInstructivoForm] = useState({ empresa: '', tarifa: '', obsTarifa: '' })
   const [adjuntosView, setAdjuntosView] = useState<{ viaje: Viaje } | null>(null)
   const [postulantesView, setPostulantesView] = useState<{ viaje: Viaje } | null>(null)
+  const [calificacionView, setCalificacionView] = useState<{ viaje: Viaje } | null>(null)
+  const [historialReputacionView, setHistorialReputacionView] = useState<{ postulante: any } | null>(null)
   const [adjuntos, setAdjuntos] = useState<Adjunto[]>([
     {
       id: "1",
@@ -148,8 +151,25 @@ export function CargoDetailView({ cargoId }: CargoDetailViewProps) {
     descripcion: "Carga de productos electrónicos y textiles.",
     viajes: [
       {
-        id: "VJ001",
+        id: "VJ000",
         numero: "01",
+        estado: "Finalizado",
+        fechaInicio: "2023-07-10",
+        fechaFin: "2023-07-11",
+        empresa: { id: "EMP001", nombre: "Transportes Rápidos S.A." },
+        camion: "ABC123",
+        chofer: { id: "CHF001", nombre: "Carlos Rodríguez" },
+        contenedor: { id: "CNT001", numero: "CONT1234567", tipo: "40' Dry" },
+        precinto: "PRC-98765",
+        ata: "ATA-001",
+        acoplado: "ACOP-001",
+        crt: "CRT-12345",
+        empresaCrt: "CRT Express",
+        valorPorCntr: 2500
+      },
+      {
+        id: "VJ001",
+        numero: "02",
         estado: "En progreso",
         fechaInicio: "2023-07-12",
         fechaFin: "2023-07-13",
@@ -166,7 +186,7 @@ export function CargoDetailView({ cargoId }: CargoDetailViewProps) {
       },
       {
         id: "VJ002",
-        numero: "02",
+        numero: "03",
         estado: "Pendiente",
         fechaInicio: "2023-07-14",
         fechaFin: "2023-07-15",
@@ -203,7 +223,27 @@ export function CargoDetailView({ cargoId }: CargoDetailViewProps) {
       acoplado: "XYZ789",
       telefono: "+54 11 2345-6789",
       email: "juan.perez@transportesrapidos.com",
-      reputacion: 4
+      reputacion: 4,
+      historial: [
+        {
+          fecha: "2023-07-01",
+          viaje: "VJ-001",
+          puntualidad: 5,
+          conduccion: 4,
+          vehiculo: 5,
+          comunicacion: 4,
+          comentario: "Excelente servicio, muy puntual y profesional."
+        },
+        {
+          fecha: "2023-06-15",
+          viaje: "VJ-002",
+          puntualidad: 4,
+          conduccion: 5,
+          vehiculo: 4,
+          comunicacion: 5,
+          comentario: "Muy buen manejo y comunicación constante."
+        }
+      ]
     },
     {
       id: "CHF-1002",
@@ -213,7 +253,18 @@ export function CargoDetailView({ cargoId }: CargoDetailViewProps) {
       acoplado: "UVW123",
       telefono: "+54 351 987-6543",
       email: "maria.gonzalez@logisticasur.com",
-      reputacion: 5
+      reputacion: 5,
+      historial: [
+        {
+          fecha: "2023-07-05",
+          viaje: "VJ-003",
+          puntualidad: 5,
+          conduccion: 5,
+          vehiculo: 5,
+          comunicacion: 5,
+          comentario: "Servicio impecable en todos los aspectos."
+        }
+      ]
     }
   ]
 
@@ -689,6 +740,136 @@ export function CargoDetailView({ cargoId }: CargoDetailViewProps) {
     )
   }
 
+  if (historialReputacionView) {
+    return (
+      <div className="container mx-auto py-6 space-y-6">
+        <div className="flex items-center gap-4 mb-6">
+          <Button variant="outline" size="sm" onClick={() => setHistorialReputacionView(null)}>
+            <ArrowLeft className="h-4 w-4 mr-2" />
+            Volver
+          </Button>
+          <div>
+            <h1 className="text-2xl font-bold">Historial de Reputación</h1>
+            <p className="text-muted-foreground">Evaluaciones anteriores de {historialReputacionView.postulante.nombre}</p>
+          </div>
+        </div>
+
+        <Card>
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <div>
+                <CardTitle>Información del Chofer</CardTitle>
+                <CardDescription>Detalles del chofer evaluado</CardDescription>
+              </div>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-2 gap-6">
+              <div className="space-y-4">
+                <div>
+                  <Label>Nombre del Chofer</Label>
+                  <p className="text-lg font-medium">{historialReputacionView.postulante.nombre}</p>
+                </div>
+                <div>
+                  <Label>Empresa</Label>
+                  <p className="text-lg font-medium">{historialReputacionView.postulante.empresa}</p>
+                </div>
+              </div>
+              <div className="space-y-4">
+                <div>
+                  <Label>Reputación Actual</Label>
+                  <div className="flex items-center gap-1">
+                    {[...Array(5)].map((_, i) => (
+                      <Star 
+                        key={i}
+                        className={`h-5 w-5 ${i < historialReputacionView.postulante.reputacion ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'}`}
+                      />
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>Historial de Evaluaciones</CardTitle>
+            <CardDescription>Evaluaciones anteriores del chofer</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-6">
+              {historialReputacionView.postulante.historial.map((evaluacion: any, index: number) => (
+                <Card key={index}>
+                  <CardContent className="pt-6">
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <p className="text-sm text-muted-foreground">Fecha</p>
+                        <p className="font-medium">{new Date(evaluacion.fecha).toLocaleDateString()}</p>
+                      </div>
+                      <div>
+                        <p className="text-sm text-muted-foreground">Viaje</p>
+                        <p className="font-medium">{evaluacion.viaje}</p>
+                      </div>
+                      <div>
+                        <p className="text-sm text-muted-foreground">Puntualidad</p>
+                        <div className="flex items-center gap-1">
+                          {[...Array(5)].map((_, i) => (
+                            <Star 
+                              key={i}
+                              className={`h-4 w-4 ${i < evaluacion.puntualidad ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'}`}
+                            />
+                          ))}
+                        </div>
+                      </div>
+                      <div>
+                        <p className="text-sm text-muted-foreground">Conducción</p>
+                        <div className="flex items-center gap-1">
+                          {[...Array(5)].map((_, i) => (
+                            <Star 
+                              key={i}
+                              className={`h-4 w-4 ${i < evaluacion.conduccion ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'}`}
+                            />
+                          ))}
+                        </div>
+                      </div>
+                      <div>
+                        <p className="text-sm text-muted-foreground">Estado del Vehículo</p>
+                        <div className="flex items-center gap-1">
+                          {[...Array(5)].map((_, i) => (
+                            <Star 
+                              key={i}
+                              className={`h-4 w-4 ${i < evaluacion.vehiculo ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'}`}
+                            />
+                          ))}
+                        </div>
+                      </div>
+                      <div>
+                        <p className="text-sm text-muted-foreground">Comunicación</p>
+                        <div className="flex items-center gap-1">
+                          {[...Array(5)].map((_, i) => (
+                            <Star 
+                              key={i}
+                              className={`h-4 w-4 ${i < evaluacion.comunicacion ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'}`}
+                            />
+                          ))}
+                        </div>
+                      </div>
+                      <div className="col-span-2">
+                        <p className="text-sm text-muted-foreground">Comentario</p>
+                        <p className="font-medium">{evaluacion.comentario}</p>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    )
+  }
+
   if (postulantesView) {
     return (
       <div className="container mx-auto py-6 space-y-6">
@@ -734,12 +915,16 @@ export function CargoDetailView({ cargoId }: CargoDetailViewProps) {
                   <TableHead>Teléfono</TableHead>
                   <TableHead>Email</TableHead>
                   <TableHead>Reputación</TableHead>
-                  <TableHead className="text-center">Acciones</TableHead>
+                  <TableHead className="w-[50px]"></TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {postulantes.map((postulante) => (
-                  <TableRow key={postulante.id}>
+                  <TableRow 
+                    key={postulante.id}
+                    className="cursor-pointer hover:bg-gray-50"
+                    onClick={() => handleSeleccionarPostulante(postulante)}
+                  >
                     <TableCell>{postulante.nombre}</TableCell>
                     <TableCell>{postulante.empresa}</TableCell>
                     <TableCell>{postulante.camion}</TableCell>
@@ -756,20 +941,179 @@ export function CargoDetailView({ cargoId }: CargoDetailViewProps) {
                         ))}
                       </div>
                     </TableCell>
-                    <TableCell className="text-center">
-                      <Button 
-                        variant="ghost" 
-                        size="sm" 
-                        className="text-green-600 hover:text-green-700 hover:bg-green-50"
-                        onClick={() => handleSeleccionarPostulante(postulante)}
-                      >
-                        Seleccionar
-                      </Button>
+                    <TableCell>
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
+                          <Button variant="ghost" className="h-8 w-8 p-0">
+                            <MoreHorizontal className="h-4 w-4" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          <DropdownMenuItem onClick={(e) => {
+                            e.stopPropagation();
+                            handleSeleccionarPostulante(postulante);
+                          }}>
+                            <CheckCircle className="mr-2 h-4 w-4" />
+                            Aceptar Chofer
+                          </DropdownMenuItem>
+                          <DropdownMenuItem onClick={(e) => {
+                            e.stopPropagation();
+                            setHistorialReputacionView({ postulante });
+                          }}>
+                            <FileText className="mr-2 h-4 w-4" />
+                            Consultar historial de reputación
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
                     </TableCell>
                   </TableRow>
                 ))}
               </TableBody>
             </Table>
+          </CardContent>
+        </Card>
+      </div>
+    )
+  }
+
+  if (calificacionView) {
+    return (
+      <div className="container mx-auto py-6 space-y-6">
+        <div className="flex items-center gap-4 mb-6">
+          <Button variant="outline" size="sm" onClick={() => setCalificacionView(null)}>
+            <ArrowLeft className="h-4 w-4 mr-2" />
+            Volver
+          </Button>
+          <div>
+            <h1 className="text-2xl font-bold">Calificar Chofer - Viaje {calificacionView.viaje.numero}</h1>
+            <p className="text-muted-foreground">Evalúe el desempeño del chofer en este viaje.</p>
+          </div>
+        </div>
+
+        <Card>
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <div>
+                <CardTitle>Información del Chofer</CardTitle>
+                <CardDescription>Detalles del chofer a calificar</CardDescription>
+              </div>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-2 gap-6">
+              <div className="space-y-4">
+                <div>
+                  <Label>Nombre del Chofer</Label>
+                  <p className="text-lg font-medium">{calificacionView.viaje.chofer?.nombre}</p>
+                </div>
+                <div>
+                  <Label>Empresa</Label>
+                  <p className="text-lg font-medium">{calificacionView.viaje.empresa?.nombre}</p>
+                </div>
+                <div>
+                  <Label>Vehículo</Label>
+                  <p className="text-lg font-medium">{calificacionView.viaje.camion}</p>
+                </div>
+              </div>
+              <div className="space-y-4">
+                <div>
+                  <Label>Fecha del Viaje</Label>
+                  <p className="text-lg font-medium">
+                    {new Date(calificacionView.viaje.fechaInicio).toLocaleDateString()} - {new Date(calificacionView.viaje.fechaFin).toLocaleDateString()}
+                  </p>
+                </div>
+                <div>
+                  <Label>Ruta</Label>
+                  <p className="text-lg font-medium">{cargoData.origen} → {cargoData.destino}</p>
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>Calificación</CardTitle>
+            <CardDescription>Evalúe los siguientes aspectos del viaje</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-6">
+              <div className="space-y-2">
+                <Label>Puntualidad</Label>
+                <div className="flex items-center gap-2">
+                  {[1, 2, 3, 4, 5].map((star) => (
+                    <Button
+                      key={star}
+                      variant="ghost"
+                      size="icon"
+                      className="h-8 w-8"
+                    >
+                      <Star className="h-5 w-5 text-yellow-400" />
+                    </Button>
+                  ))}
+                </div>
+              </div>
+              <div className="space-y-2">
+                <Label>Conducción</Label>
+                <div className="flex items-center gap-2">
+                  {[1, 2, 3, 4, 5].map((star) => (
+                    <Button
+                      key={star}
+                      variant="ghost"
+                      size="icon"
+                      className="h-8 w-8"
+                    >
+                      <Star className="h-5 w-5 text-yellow-400" />
+                    </Button>
+                  ))}
+                </div>
+              </div>
+              <div className="space-y-2">
+                <Label>Estado del Vehículo</Label>
+                <div className="flex items-center gap-2">
+                  {[1, 2, 3, 4, 5].map((star) => (
+                    <Button
+                      key={star}
+                      variant="ghost"
+                      size="icon"
+                      className="h-8 w-8"
+                    >
+                      <Star className="h-5 w-5 text-yellow-400" />
+                    </Button>
+                  ))}
+                </div>
+              </div>
+              <div className="space-y-2">
+                <Label>Comunicación</Label>
+                <div className="flex items-center gap-2">
+                  {[1, 2, 3, 4, 5].map((star) => (
+                    <Button
+                      key={star}
+                      variant="ghost"
+                      size="icon"
+                      className="h-8 w-8"
+                    >
+                      <Star className="h-5 w-5 text-yellow-400" />
+                    </Button>
+                  ))}
+                </div>
+              </div>
+              <div className="space-y-2">
+                <Label>Comentarios</Label>
+                <Textarea
+                  placeholder="Escriba sus comentarios sobre el viaje..."
+                  className="min-h-[100px]"
+                />
+              </div>
+              <div className="flex justify-end gap-2">
+                <Button variant="outline" onClick={() => setCalificacionView(null)}>
+                  Cancelar
+                </Button>
+                <Button className="bg-[#00334a] hover:bg-[#004a6b]">
+                  Guardar Calificación
+                </Button>
+              </div>
+            </div>
           </CardContent>
         </Card>
       </div>
@@ -939,6 +1283,12 @@ export function CargoDetailView({ cargoId }: CargoDetailViewProps) {
                           </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
+                          {viaje.estado === "Finalizado" && (
+                            <DropdownMenuItem onClick={() => setCalificacionView({ viaje })}>
+                              <Star className="mr-2 h-4 w-4" />
+                              Calificar Chofer
+                            </DropdownMenuItem>
+                          )}
                           <DropdownMenuItem onClick={() => { setModalViaje(viaje); setModalTipo("contenedor") }}>
                             <ContainerIcon className="mr-2 h-4 w-4" />
                             Asignar contenedor y precinto
