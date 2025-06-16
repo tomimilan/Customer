@@ -6,7 +6,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Separator } from "@/components/ui/separator"
 import { Button } from "@/components/ui/button"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { Eye, TruckIcon, UserIcon, ContainerIcon, Pencil, MoreHorizontal, BadgeCheck, PackageIcon, DollarSign, Calendar, MapPin, FileText, Hash, Ship, Landmark, Clock, BuildingIcon, LockIcon, CheckCircle, ArrowUpDownIcon, PaperclipIcon, Trash2, Upload, ArrowLeft, Users, Star, Search } from "lucide-react"
+import { Eye, TruckIcon, UserIcon, ContainerIcon, Pencil, MoreHorizontal, BadgeCheck, PackageIcon, DollarSign, Calendar, MapPin, FileText, Hash, Ship, Landmark, Clock, BuildingIcon, LockIcon, CheckCircle, ArrowUpDownIcon, PaperclipIcon, Trash2, Upload, ArrowLeft, Users, Star, Search, Phone, Mail } from "lucide-react"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { useToast } from "@/hooks/use-toast"
 import { Label } from "@/components/ui/label"
@@ -224,6 +224,7 @@ export function CargoDetailView({ cargoId }: CargoDetailViewProps) {
       telefono: "+54 11 2345-6789",
       email: "juan.perez@transportesrapidos.com",
       reputacion: 4,
+      cantidadViajes: 23,
       historial: [
         {
           fecha: "2023-07-01",
@@ -254,6 +255,7 @@ export function CargoDetailView({ cargoId }: CargoDetailViewProps) {
       telefono: "+54 351 987-6543",
       email: "maria.gonzalez@logisticasur.com",
       reputacion: 5,
+      cantidadViajes: 14,
       historial: [
         {
           fecha: "2023-07-05",
@@ -908,13 +910,14 @@ export function CargoDetailView({ cargoId }: CargoDetailViewProps) {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Nombre</TableHead>
-                  <TableHead>Empresa</TableHead>
-                  <TableHead>Camión</TableHead>
-                  <TableHead>Acoplado</TableHead>
-                  <TableHead>Teléfono</TableHead>
-                  <TableHead>Email</TableHead>
-                  <TableHead>Reputación</TableHead>
+                  <TableHead><span className="flex items-center gap-1"><UserIcon className="h-4 w-4 text-primary" /> Nombre</span></TableHead>
+                  <TableHead><span className="flex items-center gap-1"><BuildingIcon className="h-4 w-4 text-primary" /> Empresa</span></TableHead>
+                  <TableHead><span className="flex items-center gap-1"><TruckIcon className="h-4 w-4 text-primary" /> Camión</span></TableHead>
+                  <TableHead><span className="flex items-center gap-1"><TruckIcon className="h-4 w-4 text-primary" /> Acoplado</span></TableHead>
+                  <TableHead><span className="flex items-center gap-1"><Phone className="h-4 w-4 text-primary" /> Teléfono</span></TableHead>
+                  <TableHead><span className="flex items-center gap-1"><Mail className="h-4 w-4 text-primary" /> Email</span></TableHead>
+                  <TableHead><span className="flex items-center gap-1"><Star className="h-4 w-4 text-primary" /> Reputación</span></TableHead>
+                  <TableHead className="text-center"><span className="flex items-center justify-center gap-1"><TruckIcon className="h-4 w-4 text-primary" /> Cantidad de viajes</span></TableHead>
                   <TableHead className="w-[50px]"></TableHead>
                 </TableRow>
               </TableHeader>
@@ -941,6 +944,7 @@ export function CargoDetailView({ cargoId }: CargoDetailViewProps) {
                         ))}
                       </div>
                     </TableCell>
+                    <TableCell className="text-center">{postulante.cantidadViajes}</TableCell>
                     <TableCell>
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>

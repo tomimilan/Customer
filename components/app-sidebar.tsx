@@ -43,12 +43,6 @@ export function AppSidebar() {
       active: pathname === "/modules/cargas",
     },
     {
-      label: "Flota",
-      icon: Truck,
-      href: "/modules/flota",
-      active: pathname === "/modules/flota",
-    },
-    {
       label: "Parametrización",
       icon: Settings,
       href: "/modules/parametrizacion",
