@@ -126,6 +126,32 @@ export function CargoDetailView({ cargoId }: CargoDetailViewProps) {
   const [isUploading, setIsUploading] = useState(false)
   const [adjuntoAEliminar, setAdjuntoAEliminar] = useState<Adjunto | null>(null)
   const [isMapa, setIsMapa] = useState(false)
+  // Estados para calificación de chofer
+  const [calificacion, setCalificacion] = useState({
+    puntualidad: 0,
+    calidad: 0,
+    comunicacion: 0,
+    estadoCarga: 0,
+    experiencia: 0,
+    comentarios: ""
+  })
+
+  const handleSetStar = (campo: string, valor: number) => {
+    setCalificacion((prev) => ({ ...prev, [campo]: valor }))
+  }
+
+  const handleGuardarCalificacion = () => {
+    toast({
+      title: (
+        <div className="flex items-center gap-2">
+          <CheckCircle className="h-5 w-5 text-green-500 bg-green-100 rounded-full p-0.5" />
+          <span>Calificación guardada exitosamente</span>
+        </div>
+      ),
+      variant: "default"
+    })
+    setCalificacionView(null)
+  }
 
   // Datos simulados de ejemplo
   const cargoData = {
@@ -1021,14 +1047,12 @@ export function CargoDetailView({ cargoId }: CargoDetailViewProps) {
               </div>
               <div className="space-y-4">
                 <div>
-                  <Label>Fecha del Viaje</Label>
-                  <p className="text-lg font-medium">
-                    {new Date(calificacionView.viaje.fechaInicio).toLocaleDateString()} - {new Date(calificacionView.viaje.fechaFin).toLocaleDateString()}
-                  </p>
+                  <Label>Lugar de origen</Label>
+                  <p className="text-lg font-medium">{cargoData.origen}</p>
                 </div>
                 <div>
-                  <Label>Ruta</Label>
-                  <p className="text-lg font-medium">{cargoData.origen} → {cargoData.destino}</p>
+                  <Label>Lugar de destino</Label>
+                  <p className="text-lg font-medium">{cargoData.destino}</p>
                 </div>
               </div>
             </div>
@@ -1051,14 +1075,15 @@ export function CargoDetailView({ cargoId }: CargoDetailViewProps) {
                       variant="ghost"
                       size="icon"
                       className="h-8 w-8"
+                      onClick={() => handleSetStar("puntualidad", star)}
                     >
-                      <Star className="h-5 w-5 text-yellow-400" />
+                      <Star className={`h-5 w-5 ${calificacion.puntualidad >= star ? "fill-yellow-400 text-yellow-400" : "text-gray-300"}`} />
                     </Button>
                   ))}
                 </div>
               </div>
               <div className="space-y-2">
-                <Label>Conducción</Label>
+                <Label>Calidad del servicio</Label>
                 <div className="flex items-center gap-2">
                   {[1, 2, 3, 4, 5].map((star) => (
                     <Button
@@ -1066,23 +1091,9 @@ export function CargoDetailView({ cargoId }: CargoDetailViewProps) {
                       variant="ghost"
                       size="icon"
                       className="h-8 w-8"
+                      onClick={() => handleSetStar("calidad", star)}
                     >
-                      <Star className="h-5 w-5 text-yellow-400" />
-                    </Button>
-                  ))}
-                </div>
-              </div>
-              <div className="space-y-2">
-                <Label>Estado del Vehículo</Label>
-                <div className="flex items-center gap-2">
-                  {[1, 2, 3, 4, 5].map((star) => (
-                    <Button
-                      key={star}
-                      variant="ghost"
-                      size="icon"
-                      className="h-8 w-8"
-                    >
-                      <Star className="h-5 w-5 text-yellow-400" />
+                      <Star className={`h-5 w-5 ${calificacion.calidad >= star ? "fill-yellow-400 text-yellow-400" : "text-gray-300"}`} />
                     </Button>
                   ))}
                 </div>
@@ -1096,8 +1107,41 @@ export function CargoDetailView({ cargoId }: CargoDetailViewProps) {
                       variant="ghost"
                       size="icon"
                       className="h-8 w-8"
+                      onClick={() => handleSetStar("comunicacion", star)}
                     >
-                      <Star className="h-5 w-5 text-yellow-400" />
+                      <Star className={`h-5 w-5 ${calificacion.comunicacion >= star ? "fill-yellow-400 text-yellow-400" : "text-gray-300"}`} />
+                    </Button>
+                  ))}
+                </div>
+              </div>
+              <div className="space-y-2">
+                <Label>Estado de la carga al llegar</Label>
+                <div className="flex items-center gap-2">
+                  {[1, 2, 3, 4, 5].map((star) => (
+                    <Button
+                      key={star}
+                      variant="ghost"
+                      size="icon"
+                      className="h-8 w-8"
+                      onClick={() => handleSetStar("estadoCarga", star)}
+                    >
+                      <Star className={`h-5 w-5 ${calificacion.estadoCarga >= star ? "fill-yellow-400 text-yellow-400" : "text-gray-300"}`} />
+                    </Button>
+                  ))}
+                </div>
+              </div>
+              <div className="space-y-2">
+                <Label>Experiencia general</Label>
+                <div className="flex items-center gap-2">
+                  {[1, 2, 3, 4, 5].map((star) => (
+                    <Button
+                      key={star}
+                      variant="ghost"
+                      size="icon"
+                      className="h-8 w-8"
+                      onClick={() => handleSetStar("experiencia", star)}
+                    >
+                      <Star className={`h-5 w-5 ${calificacion.experiencia >= star ? "fill-yellow-400 text-yellow-400" : "text-gray-300"}`} />
                     </Button>
                   ))}
                 </div>
@@ -1107,13 +1151,15 @@ export function CargoDetailView({ cargoId }: CargoDetailViewProps) {
                 <Textarea
                   placeholder="Escriba sus comentarios sobre el viaje..."
                   className="min-h-[100px]"
+                  value={calificacion.comentarios}
+                  onChange={e => setCalificacion(f => ({ ...f, comentarios: e.target.value }))}
                 />
               </div>
               <div className="flex justify-end gap-2">
                 <Button variant="outline" onClick={() => setCalificacionView(null)}>
                   Cancelar
                 </Button>
-                <Button className="bg-[#00334a] hover:bg-[#004a6b]">
+                <Button className="bg-[#00334a] hover:bg-[#004a6b]" onClick={handleGuardarCalificacion}>
                   Guardar Calificación
                 </Button>
               </div>
