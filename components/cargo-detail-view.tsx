@@ -480,14 +480,27 @@ export function CargoDetailView({ cargoId }: CargoDetailViewProps) {
   }
 
   const handleSeleccionarPostulante = (postulante: any) => {
-    // Buscar el viaje pendiente y actualizar su estado
+    // Buscar el viaje pendiente y actualizar su estado y todos los campos
     setCargoDataState((prev: any) => {
       if (!prev) return prev
       return {
         ...prev,
         viajes: prev.viajes.map((viaje: any) =>
           viaje.estado === "Pendiente"
-            ? { ...viaje, estado: "En progreso", chofer: { id: postulante.id, nombre: postulante.nombre }, camion: postulante.camion, empresa: { nombre: postulante.empresa } }
+            ? {
+                ...viaje,
+                estado: "En progreso",
+                chofer: { id: postulante.id, nombre: postulante.nombre },
+                camion: postulante.camion,
+                empresa: { nombre: postulante.empresa },
+                acoplado: postulante.acoplado || "ACOP-002",
+                contenedor: { id: "CNT002", numero: "CONT7654321", tipo: "20' Dry" },
+                precinto: "PRC-12345",
+                ata: "ATA-002",
+                crt: "CRT-54321",
+                empresaCrt: "CRT Cargo",
+                valorPorCntr: 1800
+              }
             : viaje
         )
       }
