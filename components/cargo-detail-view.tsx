@@ -143,6 +143,7 @@ export function CargoDetailView({ cargoId }: CargoDetailViewProps) {
     experiencia: "",
     comentarios: ""
   })
+  const [cargoDataState, setCargoDataState] = useState<any>(null)
 
   const handleSetStar = (campo: string, valor: number) => {
     setCalificacion((prev) => ({ ...prev, [campo]: valor }))
@@ -341,6 +342,10 @@ export function CargoDetailView({ cargoId }: CargoDetailViewProps) {
     }
   }, [modalViaje, modalTipo])
 
+  useEffect(() => {
+    setCargoDataState(cargoData)
+  }, [])
+
   function handleAsignarContenedor(e: React.FormEvent) {
     e.preventDefault()
     let newErrors: any = {}
@@ -475,10 +480,26 @@ export function CargoDetailView({ cargoId }: CargoDetailViewProps) {
   }
 
   const handleSeleccionarPostulante = (postulante: any) => {
-    // Aquí iría la lógica para actualizar el viaje con el postulante seleccionado
+    // Buscar el viaje pendiente y actualizar su estado
+    setCargoDataState((prev: any) => {
+      if (!prev) return prev
+      return {
+        ...prev,
+        viajes: prev.viajes.map((viaje: any) =>
+          viaje.estado === "Pendiente"
+            ? { ...viaje, estado: "En progreso", chofer: { id: postulante.id, nombre: postulante.nombre }, camion: postulante.camion, empresa: { nombre: postulante.empresa } }
+            : viaje
+        )
+      }
+    })
     toast({
-      title: "Postulante seleccionado",
-      description: `Se ha seleccionado a ${postulante.nombre} para el viaje ${postulantesView?.viaje.numero}.`
+      title: (
+        <div className="flex items-center gap-2">
+          <CheckCircle className="h-5 w-5 text-green-500 bg-green-100 rounded-full p-0.5" />
+          <span>Chofer asignado exitosamente</span>
+        </div>
+      ),
+      variant: "default"
     })
     setPostulantesView(null)
   }
@@ -1337,7 +1358,7 @@ export function CargoDetailView({ cargoId }: CargoDetailViewProps) {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {cargoData.viajes.map((viaje) => (
+                {(cargoDataState ? cargoDataState.viajes : cargoData.viajes).map((viaje) => (
                   <TableRow key={viaje.id}>
                     <TableCell className="font-medium text-center">{viaje.numero}</TableCell>
                     <TableCell>{viaje.empresa?.nombre || "-"}</TableCell>
