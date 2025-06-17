@@ -135,12 +135,30 @@ export function CargoDetailView({ cargoId }: CargoDetailViewProps) {
     experiencia: 0,
     comentarios: ""
   })
+  const [erroresCalificacion, setErroresCalificacion] = useState({
+    puntualidad: "",
+    calidad: "",
+    comunicacion: "",
+    estadoCarga: "",
+    experiencia: "",
+    comentarios: ""
+  })
 
   const handleSetStar = (campo: string, valor: number) => {
     setCalificacion((prev) => ({ ...prev, [campo]: valor }))
+    setErroresCalificacion((prev) => ({ ...prev, [campo]: "" }))
   }
 
   const handleGuardarCalificacion = () => {
+    const nuevosErrores: any = {}
+    if (calificacion.puntualidad === 0) nuevosErrores.puntualidad = "El campo Puntualidad es requerido"
+    if (calificacion.calidad === 0) nuevosErrores.calidad = "El campo Calidad del servicio es requerido"
+    if (calificacion.comunicacion === 0) nuevosErrores.comunicacion = "El campo Comunicación es requerido"
+    if (calificacion.estadoCarga === 0) nuevosErrores.estadoCarga = "El campo Estado de la carga al llegar es requerido"
+    if (calificacion.experiencia === 0) nuevosErrores.experiencia = "El campo Experiencia general es requerido"
+    if (!calificacion.comentarios.trim()) nuevosErrores.comentarios = "El campo Comentarios es requerido"
+    setErroresCalificacion(nuevosErrores)
+    if (Object.keys(nuevosErrores).length > 0) return
     toast({
       title: (
         <div className="flex items-center gap-2">
@@ -256,18 +274,20 @@ export function CargoDetailView({ cargoId }: CargoDetailViewProps) {
           fecha: "2023-07-01",
           viaje: "VJ-001",
           puntualidad: 5,
-          conduccion: 4,
-          vehiculo: 5,
+          calidad: 4,
           comunicacion: 4,
+          estadoCarga: 5,
+          experiencia: 4,
           comentario: "Excelente servicio, muy puntual y profesional."
         },
         {
           fecha: "2023-06-15",
           viaje: "VJ-002",
           puntualidad: 4,
-          conduccion: 5,
-          vehiculo: 4,
+          calidad: 5,
           comunicacion: 5,
+          estadoCarga: 4,
+          experiencia: 5,
           comentario: "Muy buen manejo y comunicación constante."
         }
       ]
@@ -287,9 +307,10 @@ export function CargoDetailView({ cargoId }: CargoDetailViewProps) {
           fecha: "2023-07-05",
           viaje: "VJ-003",
           puntualidad: 5,
-          conduccion: 5,
-          vehiculo: 5,
+          calidad: 5,
           comunicacion: 5,
+          estadoCarga: 5,
+          experiencia: 5,
           comentario: "Servicio impecable en todos los aspectos."
         }
       ]
@@ -845,29 +866,18 @@ export function CargoDetailView({ cargoId }: CargoDetailViewProps) {
                           {[...Array(5)].map((_, i) => (
                             <Star 
                               key={i}
-                              className={`h-4 w-4 ${i < evaluacion.puntualidad ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'}`}
+                              className={`h-4 w-4 ${i < (evaluacion.puntualidad && evaluacion.puntualidad > 0 ? evaluacion.puntualidad : 3) ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'}`}
                             />
                           ))}
                         </div>
                       </div>
                       <div>
-                        <p className="text-sm text-muted-foreground">Conducción</p>
+                        <p className="text-sm text-muted-foreground">Calidad del servicio</p>
                         <div className="flex items-center gap-1">
                           {[...Array(5)].map((_, i) => (
                             <Star 
                               key={i}
-                              className={`h-4 w-4 ${i < evaluacion.conduccion ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'}`}
-                            />
-                          ))}
-                        </div>
-                      </div>
-                      <div>
-                        <p className="text-sm text-muted-foreground">Estado del Vehículo</p>
-                        <div className="flex items-center gap-1">
-                          {[...Array(5)].map((_, i) => (
-                            <Star 
-                              key={i}
-                              className={`h-4 w-4 ${i < evaluacion.vehiculo ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'}`}
+                              className={`h-4 w-4 ${i < (evaluacion.calidad && evaluacion.calidad > 0 ? evaluacion.calidad : 3) ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'}`}
                             />
                           ))}
                         </div>
@@ -878,7 +888,29 @@ export function CargoDetailView({ cargoId }: CargoDetailViewProps) {
                           {[...Array(5)].map((_, i) => (
                             <Star 
                               key={i}
-                              className={`h-4 w-4 ${i < evaluacion.comunicacion ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'}`}
+                              className={`h-4 w-4 ${i < (evaluacion.comunicacion && evaluacion.comunicacion > 0 ? evaluacion.comunicacion : 3) ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'}`}
+                            />
+                          ))}
+                        </div>
+                      </div>
+                      <div>
+                        <p className="text-sm text-muted-foreground">Estado de la carga al llegar</p>
+                        <div className="flex items-center gap-1">
+                          {[...Array(5)].map((_, i) => (
+                            <Star 
+                              key={i}
+                              className={`h-4 w-4 ${i < (evaluacion.estadoCarga && evaluacion.estadoCarga > 0 ? evaluacion.estadoCarga : 3) ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'}`}
+                            />
+                          ))}
+                        </div>
+                      </div>
+                      <div>
+                        <p className="text-sm text-muted-foreground">Experiencia general</p>
+                        <div className="flex items-center gap-1">
+                          {[...Array(5)].map((_, i) => (
+                            <Star 
+                              key={i}
+                              className={`h-4 w-4 ${i < (evaluacion.experiencia && evaluacion.experiencia > 0 ? evaluacion.experiencia : 3) ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'}`}
                             />
                           ))}
                         </div>
@@ -942,8 +974,8 @@ export function CargoDetailView({ cargoId }: CargoDetailViewProps) {
                   <TableHead><span className="flex items-center gap-1"><TruckIcon className="h-4 w-4 text-primary" /> Acoplado</span></TableHead>
                   <TableHead><span className="flex items-center gap-1"><Phone className="h-4 w-4 text-primary" /> Teléfono</span></TableHead>
                   <TableHead><span className="flex items-center gap-1"><Mail className="h-4 w-4 text-primary" /> Email</span></TableHead>
-                  <TableHead><span className="flex items-center gap-1"><Star className="h-4 w-4 text-primary" /> Reputación</span></TableHead>
                   <TableHead className="text-center"><span className="flex items-center justify-center gap-1"><TruckIcon className="h-4 w-4 text-primary" /> Cantidad de viajes</span></TableHead>
+                  <TableHead><span className="flex items-center gap-1"><Star className="h-4 w-4 text-primary" /> Reputación</span></TableHead>
                   <TableHead className="w-[50px]"></TableHead>
                 </TableRow>
               </TableHeader>
@@ -951,8 +983,7 @@ export function CargoDetailView({ cargoId }: CargoDetailViewProps) {
                 {postulantes.map((postulante) => (
                   <TableRow 
                     key={postulante.id}
-                    className="cursor-pointer hover:bg-gray-50"
-                    onClick={() => handleSeleccionarPostulante(postulante)}
+                    className="hover:bg-gray-50"
                   >
                     <TableCell>{postulante.nombre}</TableCell>
                     <TableCell>{postulante.empresa}</TableCell>
@@ -960,6 +991,7 @@ export function CargoDetailView({ cargoId }: CargoDetailViewProps) {
                     <TableCell>{postulante.acoplado}</TableCell>
                     <TableCell>{postulante.telefono}</TableCell>
                     <TableCell>{postulante.email}</TableCell>
+                    <TableCell className="text-center">{postulante.cantidadViajes}</TableCell>
                     <TableCell>
                       <div className="flex items-center gap-1">
                         {[...Array(5)].map((_, i) => (
@@ -970,7 +1002,6 @@ export function CargoDetailView({ cargoId }: CargoDetailViewProps) {
                         ))}
                       </div>
                     </TableCell>
-                    <TableCell className="text-center">{postulante.cantidadViajes}</TableCell>
                     <TableCell>
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
@@ -1081,6 +1112,7 @@ export function CargoDetailView({ cargoId }: CargoDetailViewProps) {
                     </Button>
                   ))}
                 </div>
+                {erroresCalificacion.puntualidad && <p className="text-sm text-red-500 mt-1">{erroresCalificacion.puntualidad}</p>}
               </div>
               <div className="space-y-2">
                 <Label>Calidad del servicio</Label>
@@ -1097,6 +1129,7 @@ export function CargoDetailView({ cargoId }: CargoDetailViewProps) {
                     </Button>
                   ))}
                 </div>
+                {erroresCalificacion.calidad && <p className="text-sm text-red-500 mt-1">{erroresCalificacion.calidad}</p>}
               </div>
               <div className="space-y-2">
                 <Label>Comunicación</Label>
@@ -1113,6 +1146,7 @@ export function CargoDetailView({ cargoId }: CargoDetailViewProps) {
                     </Button>
                   ))}
                 </div>
+                {erroresCalificacion.comunicacion && <p className="text-sm text-red-500 mt-1">{erroresCalificacion.comunicacion}</p>}
               </div>
               <div className="space-y-2">
                 <Label>Estado de la carga al llegar</Label>
@@ -1129,6 +1163,7 @@ export function CargoDetailView({ cargoId }: CargoDetailViewProps) {
                     </Button>
                   ))}
                 </div>
+                {erroresCalificacion.estadoCarga && <p className="text-sm text-red-500 mt-1">{erroresCalificacion.estadoCarga}</p>}
               </div>
               <div className="space-y-2">
                 <Label>Experiencia general</Label>
@@ -1145,6 +1180,7 @@ export function CargoDetailView({ cargoId }: CargoDetailViewProps) {
                     </Button>
                   ))}
                 </div>
+                {erroresCalificacion.experiencia && <p className="text-sm text-red-500 mt-1">{erroresCalificacion.experiencia}</p>}
               </div>
               <div className="space-y-2">
                 <Label>Comentarios</Label>
@@ -1152,8 +1188,9 @@ export function CargoDetailView({ cargoId }: CargoDetailViewProps) {
                   placeholder="Escriba sus comentarios sobre el viaje..."
                   className="min-h-[100px]"
                   value={calificacion.comentarios}
-                  onChange={e => setCalificacion(f => ({ ...f, comentarios: e.target.value }))}
+                  onChange={e => { setCalificacion(f => ({ ...f, comentarios: e.target.value })); setErroresCalificacion(prev => ({ ...prev, comentarios: "" })) }}
                 />
+                {erroresCalificacion.comentarios && <p className="text-sm text-red-500 mt-1">{erroresCalificacion.comentarios}</p>}
               </div>
               <div className="flex justify-end gap-2">
                 <Button variant="outline" onClick={() => setCalificacionView(null)}>
